@@ -7,6 +7,8 @@ User = get_user_model()
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     profileImg = models.ImageField(upload_to='avatar', default='blank-profile-picture.png')
+    firstName = models.CharField(max_length=100, blank=True)
+    lastName = models.CharField(max_length=100, blank=True)
     gender = models.BooleanField(default=True)
     bio = models.TextField(blank=True)
     location = models.CharField(max_length=100, blank=True)
