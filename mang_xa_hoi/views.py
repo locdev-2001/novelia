@@ -2,6 +2,7 @@ from email import message
 # from email.mime import image
 from django.shortcuts import redirect, render
 from django.contrib.auth.models import User, auth
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
 # from django.http import HttpResponse
 from .models import Profile, Post
@@ -115,6 +116,7 @@ def signin(request):
 
         user = auth.authenticate(username=username, password=password)
         if user is not None:
+            login(request, user)
             return redirect('/')
         else:
             messages.info(request, 'Wrong username or password')
