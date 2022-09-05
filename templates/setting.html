@@ -44,7 +44,7 @@
                         <p></p>
                     </div>
                     <div class="bg-white rounded-md lg:shadow-lg shadow col-span-2">
-                    <form action="" method="POST">
+                    <form action="" method="POST" enctype="multipart/form-data">
                         {%csrf_token%}
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
                             <div class="col-span-2">
@@ -60,17 +60,17 @@
                             <label for=""> Last name</label>
                             <input type="text" value="{{user_profile.lastName}}" name="lastName" placeholder="Your last name.." class="shadow-none bg-gray-100">
                             </div>
-                            <div class="col-span-2">
+                            <!-- <div class="col-span-2">
                                 <label for=""> Email</label>
-                                <input type="text" placeholder="{{user.email}}" class="shadow-none bg-gray-100">
-                            </div>
+                                <input type="text" name ="email" placeholder="{{user.email}}" class="shadow-none bg-gray-100">
+                            </div> -->
                             <div class="col-span-2">
                                 <label for="about">Bio</label>  
                                 <textarea id="about" name="bio"rows="3"  class="shadow-none bg-gray-100">{{user_profile.bio}}</textarea>
                             </div> 
                             <div class="col-span-2">
                                 <label for=""> Location</label>
-                                <input type="text" value="{{user_profile.location}}" class="shadow-none bg-gray-100">
+                                <input type="text" name="location" value="{{user_profile.location}}" class="shadow-none bg-gray-100">
                             </div>
 
 
