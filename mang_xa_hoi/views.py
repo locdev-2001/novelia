@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 # from django.http import HttpResponse
-from .models import Profile, Post
+from .models import Profile, Post, LikePost
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -16,7 +16,6 @@ def home(request):
     user_profile = Profile.objects.get(user=user_object)
     
     posts = Post.objects.all()
-    
     return render(request, 'home.html', {'user_profile': user_profile, 'posts':posts})
 
 
@@ -33,6 +32,27 @@ def upload(request):
     else:
         return redirect('/')
 
+@login_required(login_url='signin')
+def like_post(request):
+    username = request.user.username
+    post_id = request.GET.get('post_id')
+    
+    post = Post.objects.get(id = post_id)
+    
+    like_filter = LikePost.objects.filter(post_id = post_id, username = username).first()
+    
+    if like_filter == None:
+        new_like = LikePost.objects.create(post_id_id = post_id, username = username)
+        new_like.save()
+        
+        post.liked = post.liked+1
+        post.save()
+        return redirect('/')
+    else:
+        like_filter.delete()
+        post.liked = post.liked-1
+        post.save()
+        return redirect('/')
 
 @login_required(login_url='signin')
 def settings(request):

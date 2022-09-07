@@ -27,3 +27,9 @@ class Post(models.Model):
     
     def __str__(self):
         return  self.user
+class LikePost(models.Model):
+    post_id = models.ForeignKey('Post', on_delete=models.CASCADE)
+    username = models.CharField(max_length=100)
+    liked_date = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.username
