@@ -258,7 +258,11 @@
                                         
                                     </a>
                                 </div>
-                                {%if post.liked != 0%}
+                                {% if post.liked == 0 %}
+                                <p class="flex items-center space-x-2">Liked by {{post.liked}} person</p>
+                                {% elif post.liked == 1 %}
+                                <p class="flex items-center space-x-2">Liked by {{post.liked}} person</p>
+                                {%else%}
                                 <p class="flex items-center space-x-2">Liked by {{post.liked}} persons</p>
                                 {%endif%}
                                 <!-- like -->

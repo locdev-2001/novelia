@@ -16,7 +16,7 @@ def home(request):
     user_profile = Profile.objects.get(user=user_object)
 
     posts = Post.objects.all()
-    
+
     return render(request, 'home.html', {'user_profile': user_profile, 'posts': posts})
 
 
@@ -26,11 +26,25 @@ def profile(request, pk):
     user_profile = Profile.objects.get(user=user_object)
     user_posts = Post.objects.filter(user=pk)
     user_post_length = len(user_posts)
+
+    friend = request.user.username
+    user = pk
+
+    if Friends.objects.filter(friend=friend, user=user).first():
+        button_text = 'UnFriend'
+    else:
+        button_text = 'Add Friend'
+
+    user_friend = len(Friends.objects.filter(user=pk))
+    user_friend2 = len(Friends.objects.filter(friend=pk))
     context = {
         'user_object': user_object,
         'user_profile': user_profile,
         'user_posts': user_posts,
         'user_post_length': user_post_length,
+        'button_text': button_text,
+        'user_friend': user_friend,
+        'user_friend2': user_friend2,
     }
     return render(request, 'profile.html', context)
 
@@ -48,14 +62,15 @@ def upload(request):
     else:
         return redirect('/')
 
+
 @login_required(login_url='signin')
 def addfriend(request):
-    if request.method =='POST':
+    if request.method == 'POST':
         friend = request.POST['friend']
         user = request.POST['user']
-        
+
         if Friends.objects.filter(friend=friend, user=user).first():
-            delete_friend = Friends.objects.get(friend = friend, user =user)
+            delete_friend = Friends.objects.get(friend=friend, user=user)
             delete_friend.delete()
             return redirect('/profile/'+user)
         else:
@@ -64,6 +79,7 @@ def addfriend(request):
             return redirect('/profile/'+user)
     else:
         return redirect('/')
+
 
 @login_required(login_url='signin')
 def like_post(request):

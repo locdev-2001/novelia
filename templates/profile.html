@@ -33,9 +33,9 @@
               ></span
             >
 
-            {% if user_post_length in 0 %}
+            {% if user_post_length == 0 %}
             <span style="color: white; font-size: 27px"><b>No Post</b></span>
-            {%elif user_post_length in 1 %}
+            {%elif user_post_length == 1 %}
             <span style="color: white; font-size: 27px"
               ><b>{{user_post_length}} Post</b></span
             >
@@ -44,12 +44,30 @@
               ><b>{{user_post_length}} Posts</b></span
             >
             {%endif%}
+            {% if user_object.username == user.username %}
+              {%if user_friend2 == 0 or user_friend2 == 1%}
+              <span style="color: white; font-size: 27px"
+                ><b>{{user_friend2}} Friend</b></span
+              >
+              {%else%}
+              <span style="color: white; font-size: 27px"
+                ><b>{{user_friend2}} Friends</b></span
+              >
+              {%endif%} 
+            {%else%}
+            {%if user_friend == 0 or user_friend == 1%}
             <span style="color: white; font-size: 27px"
-              ><b>1.7m followers</b></span
+              ><b>{{user_friend}}Friend</b></span
             >
+            {%else%}
             <span style="color: white; font-size: 27px"
+              ><b>{{user_friend}}Friends</b></span
+            >
+            {%endif%}
+            {%endif%}
+            <!-- <span style="color: white; font-size: 27px"
               ><b>3.5k following</b></span
-            >
+            > -->
             <input type="hidden" value="{{user.username}}" name="friend" />
             <input type="hidden" value="{{user_object.username}}" name="user" />
 
@@ -58,9 +76,10 @@
               href="/settings"
               title=""
               data-ripple=""
-              style="background-color: #ffc0cb; border: 1px solid #ffc0cb;"
-            >
+              style="background-color: #ffc0cb; border: 1px solid #ffc0cb"
+            ><button  style="width:100%;background-color: #ffc0cb; border: #ffc0cb">
               Setting Profile
+            </button>
             </a>
             {% else %}
             <a title="" data-ripple=""
@@ -68,7 +87,7 @@
                 type="submit"
                 style="background-color: #ffc0cb; border: #ffc0cb"
               >
-                Add Friend
+                {{button_text}}
               </button></a
             >
             {% endif %}
@@ -174,10 +193,27 @@
                         >
                           <img
                             src="{{post.image.url}}"
-                            style="object-fit: center"
+                            style="object-fit: cover"
                             alt=""
                           />
                         </a>
+                        <span style="font-weight: bold;">{{post.caption}}</span>
+                        <div class="flex space-x-4 lg:font-bold">
+                                    <a href="/like-post?post_id={{post.id}}" class="flex items-center space-x-2">
+                                        <div class="p-2 rounded-full text-black">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="25" height="25" class="">
+                                                <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+                                            </svg>
+                                        </div>
+                                    </a>
+                        </div>
+                        {% if post.liked == 0 %}
+                        <p class="flex items-center space-x-2">Liked by {{post.liked}} person</p>
+                        {% elif post.liked == 1 %}
+                        <p class="flex items-center space-x-2">Liked by {{post.liked}} person</p>
+                        {%else%}
+                        <p class="flex items-center space-x-2">Liked by {{post.liked}} persons</p>
+                        {%endif%}
                       </li>
                       {% endfor %}
                     </ul>
