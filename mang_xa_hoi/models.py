@@ -33,3 +33,9 @@ class LikePost(models.Model):
     liked_date = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.username
+class Friends(models.Model):
+    user = models.CharField(max_length=100)
+    friend = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.user

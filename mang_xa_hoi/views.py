@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, auth
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 # from django.http import HttpResponse
-from .models import Profile, Post, LikePost
+from .models import Friends, Profile, Post, LikePost
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
@@ -16,7 +16,7 @@ def home(request):
     user_profile = Profile.objects.get(user=user_object)
 
     posts = Post.objects.all()
-
+    
     return render(request, 'home.html', {'user_profile': user_profile, 'posts': posts})
 
 
@@ -48,6 +48,22 @@ def upload(request):
     else:
         return redirect('/')
 
+@login_required(login_url='signin')
+def addfriend(request):
+    if request.method =='POST':
+        friend = request.POST['friend']
+        user = request.POST['user']
+        
+        if Friends.objects.filter(friend=friend, user=user).first():
+            delete_friend = Friends.objects.get(friend = friend, user =user)
+            delete_friend.delete()
+            return redirect('/profile/'+user)
+        else:
+            new_friend = Friends.objects.create(friend=friend, user=user)
+            new_friend.save()
+            return redirect('/profile/'+user)
+    else:
+        return redirect('/')
 
 @login_required(login_url='signin')
 def like_post(request):
