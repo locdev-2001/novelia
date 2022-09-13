@@ -49,9 +49,19 @@
                         <div class="grid grid-cols-2 gap-3 lg:p-6 p-4">
                             <div class="col-span-2">
                                 <label for="">Profile Image</label>
-                                <img src="{{user_profile.profileImg.url}}"/>
-                                <input type="file" name="image" placeholder="" class="shadow-none bg-gray-100">
+                                <img id="uploadPreview" src="{{user_profile.profileImg.url}}"/>
+                                <input id="uploadImage" type="file" name="image" placeholder="" class="shadow-none bg-gray-100" onchange="PreviewImage();">
                             </div>
+                            <script type="text/javascript">
+                                function PreviewImage() {
+                                    var oFReader = new FileReader();
+                                    oFReader.readAsDataURL(document.getElementById("uploadImage").files[0]);
+
+                                    oFReader.onload = function (oFREvent) {
+                                        document.getElementById("uploadPreview").src = oFREvent.target.result;
+                                    };
+                                };
+                            </script>
                         <div>
                             <label for=""> First name</label>
                             <input type="text" value="{{user_profile.firstName}}" name ="firstName" placeholder="Your first name.." class="shadow-none bg-gray-100">

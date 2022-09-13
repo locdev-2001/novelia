@@ -7,6 +7,8 @@ from django.contrib import messages
 # from django.http import HttpResponse
 from .models import Friends, Profile, Post, LikePost
 from django.contrib.auth.decorators import login_required
+from itertools import chain
+import random
 # Create your views here.
 
 
@@ -14,10 +16,47 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user=user_object)
+    user_friend_list = []
+    feed = []
 
-    posts = Post.objects.all()
+    user_friend = Friends.objects.filter(friend=request.user.username)
 
-    return render(request, 'home.html', {'user_profile': user_profile, 'posts': posts})
+    for user in user_friend:
+        user_friend_list.append(user.user)
+    for usernames in user_friend_list:
+        feed_list = Post.objects.filter(user=usernames)
+
+        feed.append(feed_list)
+
+    feed_list = list(chain(*feed))
+
+    # user suggestions starts
+    all_users = User.objects.all()
+    user_friend_all = []
+
+    for user in user_friend:
+        user_list = User.objects.get(username=user.user)
+        user_friend_all.append(user_list)
+
+    new_suggestions_list = [x for x in list(
+        all_users) if (x not in list(user_friend_all))]
+    current_user = User.objects.filter(username=request.user.username)
+    final_suggestions_list = [x for x in list(
+        new_suggestions_list) if(x not in list(current_user))]
+    random.shuffle(final_suggestions_list)
+    username_profile = []
+    username_profile_list = []
+
+    for users in final_suggestions_list:
+        username_profile.append(users.id)
+
+    for ids in username_profile:
+        profile_lists = Profile.objects.filter(id=ids)
+        username_profile_list.append(profile_lists)
+
+    suggestions_username_profile_list = list(chain(*username_profile_list))
+
+    return render(request, 'home.html', {'user_profile': user_profile, 'posts': feed_list, 'suggestions_username_profile_list': suggestions_username_profile_list[:4]})
 
 
 @login_required(login_url='signin')
@@ -79,6 +118,28 @@ def addfriend(request):
             return redirect('/profile/'+user)
     else:
         return redirect('/')
+
+
+@login_required(login_url='signin')
+def search(request):
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user=user_object)
+
+    if request.method == "POST":
+        username = request.POST['username']
+        username_object = User.objects.filter(username__icontains=username)
+
+        username_profile = []
+        username_profile_list = []
+
+        for users in username_object:
+            username_profile.append(users.id)
+
+        for ids in username_profile:
+            profile_lists = Profile.objects.filter(id=ids)
+            username_profile_list.append(profile_lists)
+        username_profile_list = list(chain(*username_profile_list))
+    return render(request, 'search.html', {'username': username, 'user_profile': user_profile, 'username_profile_list': username_profile_list})
 
 
 @login_required(login_url='signin')
